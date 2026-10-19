@@ -1,0 +1,1243 @@
+<!doctype html>
+<html lang="ko" data-seed-color-mode="light-only">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>추천 포지션 위젯 로고 모션</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="../../../assets/seed/base.css" />
+    <link rel="stylesheet" href="../../../assets/seed/jobda-overrides.css" />
+    <style>
+      /* light-only를 걸면 base.css의 brand 토큰이 오버라이드를 이기므로 다시 건다 */
+      :root[data-seed-color-mode="light-only"] {
+        --seed-color-bg-brand-solid: var(--jobda-blue-500);
+        --seed-color-bg-brand-solid-pressed: var(--jobda-blue-600);
+        --seed-color-bg-brand-weak: var(--jobda-blue-50);
+        --seed-color-fg-brand: var(--jobda-blue-600);
+        --seed-color-stroke-brand-weak: var(--jobda-blue-100);
+        --seed-color-stroke-focus-ring: var(--jobda-blue-400);
+      }
+
+      :root {
+        --spd: 1;
+        --fg: var(--seed-color-fg-neutral);
+        --fg-subtle: var(--seed-color-fg-neutral-subtle);
+        --fg-muted: var(--seed-color-fg-neutral-muted);
+        --fg-inverted: var(--seed-color-fg-neutral-inverted);
+        --card: var(--seed-color-bg-layer-default);
+        --page: var(--seed-color-bg-layer-basement);
+        --chip: var(--seed-color-bg-neutral-weak);
+        --inverted: var(--seed-color-bg-neutral-inverted);
+        --line: var(--seed-color-stroke-neutral-muted);
+        --line-weak: var(--seed-color-stroke-neutral-weak);
+        --brand: var(--seed-color-bg-brand-solid);
+        --brand-weak: var(--seed-color-bg-brand-weak);
+        --brand-fg: var(--seed-color-fg-brand);
+        --orange: var(--seed-color-palette-carrot-600);
+        --r-card: 32px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        background: var(--page);
+        color: var(--fg);
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+        letter-spacing: -0.01em;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button {
+        font: inherit;
+        color: inherit;
+        border: 0;
+        background: none;
+        cursor: pointer;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible {
+        outline: 3px solid var(--seed-color-stroke-focus-ring);
+        outline-offset: 2px;
+      }
+
+      a {
+        color: var(--brand-fg);
+      }
+
+      /* ── 상단 바 ─────────────────────────────── */
+      .top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px 16px;
+        padding: 22px 32px 0;
+      }
+
+      .top h1 {
+        margin: 0;
+        font-size: var(--seed-font-size-t7);
+        line-height: var(--seed-line-height-t7);
+        font-weight: 700;
+      }
+
+      .top .meta {
+        color: var(--fg-subtle);
+        font-size: var(--seed-font-size-t3);
+        line-height: var(--seed-line-height-t3);
+      }
+
+      .top .meta a {
+        margin-left: 6px;
+      }
+
+      /* ── 레이아웃 ─────────────────────────────── */
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 24px;
+        padding: 20px 32px 32px;
+        align-items: start;
+      }
+
+      @media (max-width: 1240px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .stage {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-content: start;
+        padding: 28px;
+        border-radius: 24px;
+        background: var(--seed-color-palette-gray-300);
+        background-image:
+          linear-gradient(var(--seed-color-palette-gray-400) 1px, transparent 1px),
+          linear-gradient(90deg, var(--seed-color-palette-gray-400) 1px, transparent 1px);
+        background-size: 216px 216px;
+        background-position: 28px 28px;
+      }
+
+      .slot-frame {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .slot-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--fg-subtle);
+        font-size: var(--seed-font-size-t2);
+        line-height: var(--seed-line-height-t2);
+        font-weight: 600;
+      }
+
+      .slot-label .tag {
+        padding: 2px 8px;
+        border-radius: var(--seed-radius-full);
+        background: var(--card);
+        color: var(--fg-muted);
+        font-weight: 600;
+      }
+
+      /* ── 위젯 카드 ─────────────────────────────── */
+      .widget {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 416px;
+        background: var(--card);
+        border-radius: var(--r-card);
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 3%);
+      }
+
+      .widget.w22 {
+        height: 416px;
+        padding: 24px;
+      }
+
+      .widget.w21 {
+        height: 200px;
+        padding: 20px 24px;
+      }
+
+      .w-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 22px;
+        font-size: 14px;
+        line-height: 22px;
+        font-weight: 700;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--orange);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .status svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .is-playing .status svg {
+        animation: spin calc(1.6s * var(--spd)) linear infinite;
+      }
+
+      .w-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        min-height: 0;
+      }
+
+      .w21 .w-body {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 16px;
+      }
+
+      .w-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 32px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 8px 12px 8px 10px;
+        border-radius: var(--seed-radius-full);
+        background: var(--chip);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .chip img,
+      .chip svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: 32px;
+        padding: 8px 12px 8px 14px;
+        border-radius: var(--seed-radius-full);
+        background: var(--inverted);
+        color: var(--fg-inverted);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .cta img {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ── 텍스트 ─────────────────────────────── */
+      .w-text {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .w21 .w-text {
+        flex: 1;
+        min-width: 0;
+        gap: 6px;
+        text-align: left;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 26px;
+        font-weight: 600;
+        word-break: keep-all;
+        --roll-h: 26px;
+      }
+
+      .w21 .title {
+        font-size: 14px;
+        line-height: 20px;
+        --roll-h: 20px;
+      }
+
+      .caption {
+        margin: 0;
+        color: var(--fg-subtle);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .w21 .caption {
+        display: none;
+      }
+
+      .roll {
+        position: relative;
+        display: inline-block;
+        height: var(--roll-h);
+        vertical-align: top;
+        overflow: hidden;
+        text-decoration: underline;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 3px;
+        transition: width calc(0.32s * var(--spd)) cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .roll-item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        transition:
+          transform calc(0.42s * var(--spd)) cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity calc(0.3s * var(--spd)) ease;
+      }
+
+      .roll-item.enter {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      .roll-item.leave {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      /* ── 로고 행 ─────────────────────────────── */
+      .row {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 72px;
+        --d: 72px;
+        --step: 60px;
+      }
+
+      .w21 .row {
+        width: 200px;
+        flex: none;
+        height: 56px;
+        --d: 56px;
+        --step: 48px;
+      }
+
+      .row-inner {
+        position: relative;
+        width: calc(var(--d) + var(--step) * 3);
+        height: var(--d);
+      }
+
+      .logo {
+        position: absolute;
+        top: 0;
+        left: calc(var(--i) * var(--step));
+        width: var(--d);
+        height: var(--d);
+        border-radius: 50%;
+        background: var(--card);
+        box-shadow:
+          0 0 0 2px var(--card),
+          inset 0 0 0 1px var(--line-weak);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform calc(0.46s * var(--spd)) cubic-bezier(0.2, 0.9, 0.3, 1.25),
+          opacity calc(0.26s * var(--spd)) ease;
+        will-change: transform, opacity;
+      }
+
+      .logo img {
+        width: 92%;
+        height: 92%;
+        object-fit: contain;
+        border-radius: 50%;
+        transition:
+          opacity calc(0.3s * var(--spd)) ease,
+          filter calc(0.3s * var(--spd)) ease;
+      }
+
+      .logo img[data-fit="cover"] {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .logo.is-out {
+        transform: scale(0.5) translateY(10px);
+        opacity: 0;
+        transition:
+          transform calc(0.24s * var(--spd)) ease-in,
+          opacity calc(0.2s * var(--spd)) ease-in;
+      }
+
+      .logo.is-in {
+        transform: scale(0.5) translateY(-10px);
+        opacity: 0;
+        transition: none;
+      }
+
+      /* 로고 톤 */
+      .tone-dim .logo img {
+        opacity: 0.55;
+      }
+
+      .tone-gray .logo img {
+        filter: grayscale(1);
+        opacity: 0.6;
+      }
+
+      /* 흐름(마키) */
+      .row.stream {
+        justify-content: flex-start;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+      }
+
+      .track {
+        display: flex;
+        gap: 10px;
+        height: var(--d);
+        width: max-content;
+        animation: stream var(--stream-dur, 40s) linear infinite;
+      }
+
+      .w21 .track {
+        gap: 8px;
+      }
+
+      .track .logo {
+        position: relative;
+        left: auto;
+        flex: none;
+        box-shadow: inset 0 0 0 1px var(--line-weak);
+      }
+
+      .row.stream:hover .track,
+      .paused .track {
+        animation-play-state: paused;
+      }
+
+      @keyframes stream {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* 스캔 */
+      .is-playing .row.scan .logo {
+        animation: lift calc(2.4s * var(--spd)) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        animation-delay: calc(var(--i) * 0.2s * var(--spd));
+      }
+
+      .scanbar {
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        left: -48px;
+        width: 48px;
+        border-radius: 24px;
+        background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 26%, transparent), transparent);
+        mix-blend-mode: multiply;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      .is-playing .row.scan .scanbar {
+        animation: sweep calc(2.4s * var(--spd)) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+
+      @keyframes lift {
+        0%,
+        16% {
+          transform: none;
+        }
+        26% {
+          transform: translateY(-6px) scale(1.06);
+        }
+        40%,
+        100% {
+          transform: none;
+        }
+      }
+
+      @keyframes sweep {
+        0% {
+          left: -24px;
+          opacity: 0;
+        }
+        8% {
+          opacity: 1;
+        }
+        60% {
+          opacity: 1;
+        }
+        66% {
+          left: calc(100% - 24px);
+          opacity: 0;
+        }
+        100% {
+          left: calc(100% - 24px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── 컨트롤 패널 ─────────────────────────────── */
+      .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 22px 22px 24px;
+        border-radius: 24px;
+        background: var(--card);
+        position: sticky;
+        top: 20px;
+      }
+
+      .group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .label {
+        color: var(--fg-subtle);
+        font-size: var(--seed-font-size-t2);
+        line-height: var(--seed-line-height-t2);
+        font-weight: 600;
+      }
+
+      .seg {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .seg button {
+        padding: 7px 12px;
+        border-radius: var(--seed-radius-full);
+        background: var(--chip);
+        color: var(--fg-muted);
+        font-size: var(--seed-font-size-t3);
+        line-height: var(--seed-line-height-t3);
+        font-weight: 600;
+        transition:
+          background var(--seed-duration-d3),
+          color var(--seed-duration-d3);
+      }
+
+      .seg button:hover {
+        background: var(--seed-color-bg-neutral-weak-pressed);
+      }
+
+      .seg button.on {
+        background: var(--inverted);
+        color: var(--fg-inverted);
+      }
+
+      .seg button[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .desc {
+        margin: 0;
+        padding: 12px 14px;
+        border-radius: var(--seed-radius-r3);
+        background: var(--seed-color-palette-gray-100);
+        color: var(--fg-muted);
+        font-size: var(--seed-font-size-t3);
+        line-height: var(--seed-line-height-t3);
+        min-height: 58px;
+      }
+
+      .inline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .check {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: var(--seed-font-size-t3);
+        font-weight: 600;
+        color: var(--fg-muted);
+      }
+
+      .check input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--brand);
+        margin: 0;
+      }
+
+      .btn {
+        padding: 7px 12px;
+        border-radius: var(--seed-radius-full);
+        background: var(--brand-weak);
+        color: var(--brand-fg);
+        font-size: var(--seed-font-size-t3);
+        font-weight: 600;
+      }
+
+      .btn.ghost {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px var(--line);
+        color: var(--fg-muted);
+      }
+
+      .note {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line-weak);
+        color: var(--fg-muted);
+        font-size: var(--seed-font-size-t3);
+        line-height: var(--seed-line-height-t3);
+      }
+
+      .note b {
+        color: var(--fg);
+      }
+
+      .note ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .note li + li {
+        margin-top: 4px;
+      }
+
+      .reduced {
+        display: none;
+        padding: 10px 12px;
+        border-radius: var(--seed-radius-r3);
+        background: var(--seed-color-bg-warning-weak);
+        color: var(--seed-color-fg-warning);
+        font-size: var(--seed-font-size-t2);
+        font-weight: 600;
+      }
+
+      body.reduced-motion .reduced {
+        display: block;
+      }
+
+      /* ── 로고 풀 ─────────────────────────────── */
+      .pool {
+        padding: 0 32px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .pool h2 {
+        margin: 0;
+        font-size: var(--seed-font-size-t5);
+        line-height: var(--seed-line-height-t5);
+        font-weight: 700;
+      }
+
+      .pool h2 small {
+        margin-left: 8px;
+        color: var(--fg-subtle);
+        font-size: var(--seed-font-size-t3);
+        font-weight: 500;
+      }
+
+      .pool-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 8px;
+      }
+
+      .pool-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: var(--seed-radius-r3);
+        background: var(--card);
+        text-align: left;
+        min-width: 0;
+      }
+
+      .pool-item.excluded {
+        opacity: 0.5;
+      }
+
+      .pool-item .logo {
+        position: relative;
+        left: auto;
+        flex: none;
+        width: 40px;
+        height: 40px;
+        box-shadow: inset 0 0 0 1px var(--line-weak);
+        transition: none;
+      }
+
+      .pool-item .name {
+        font-size: var(--seed-font-size-t2);
+        line-height: var(--seed-line-height-t2);
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pool-item .sub {
+        color: var(--fg-subtle);
+        font-size: 11px;
+        line-height: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pool-item .txt {
+        min-width: 0;
+      }
+
+      details summary {
+        cursor: pointer;
+        color: var(--fg-subtle);
+        font-size: var(--seed-font-size-t3);
+        font-weight: 600;
+      }
+
+      details .pool-grid {
+        margin-top: 10px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .logo,
+        .roll,
+        .roll-item,
+        .track,
+        .status svg {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <h1>추천 포지션 위젯 · 로켓지원 기업 로고 모션</h1>
+      <p class="meta" id="meta"></p>
+    </header>
+
+    <main class="layout">
+      <section class="stage tone-clear is-playing" id="stage">
+        <div class="slot-frame">
+          <div class="slot-label"><span class="tag">2×2</span>416 × 416 · 기본 크기</div>
+          <article class="widget w22" id="w22" aria-label="추천 포지션 위젯 2×2"></article>
+        </div>
+        <div class="slot-frame">
+          <div class="slot-label"><span class="tag">2×1</span>416 × 200</div>
+          <article class="widget w21" id="w21" aria-label="추천 포지션 위젯 2×1"></article>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="reduced">시스템의 동작 줄이기 설정이 켜져 있어 모션을 정지 상태로 보여 줍니다.</div>
+
+        <div class="group">
+          <div class="label">위젯 상태</div>
+          <div class="seg" data-key="state">
+            <button data-v="empty" class="on">메모리 없음</button>
+            <button data-v="updating">메모리 업데이트 중</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label">로고 모션</div>
+          <div class="seg" data-key="motion">
+            <button data-v="static">원안 · 정지</button>
+            <button data-v="swap" class="on">슬롯 교체</button>
+            <button data-v="set">세트 교체</button>
+            <button data-v="stream">흐름</button>
+            <button data-v="scan">스캔</button>
+          </div>
+          <p class="desc" id="motionDesc"></p>
+        </div>
+
+        <div class="group">
+          <div class="label">속도</div>
+          <div class="seg" data-key="speed">
+            <button data-v="1.4">느리게</button>
+            <button data-v="1" class="on">보통</button>
+            <button data-v="0.65">빠르게</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label">로고 톤</div>
+          <div class="seg" data-key="tone">
+            <button data-v="clear" class="on">선명 · 디자인</button>
+            <button data-v="dim">톤 다운</button>
+            <button data-v="gray">회색조 · 정책 '흐리게'</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="label">로고 풀</div>
+          <div class="seg" data-key="pool">
+            <button data-v="A" class="on">기본 16</button>
+            <button data-v="ALL" id="poolAllBtn">전체</button>
+          </div>
+        </div>
+
+        <div class="group inline">
+          <label class="check"><input type="checkbox" id="rollToggle" checked /> 밑줄 문구 롤링</label>
+          <button class="btn" id="playToggle">일시 정지</button>
+          <button class="btn ghost" id="reshuffle">다시 섞기</button>
+        </div>
+
+        <div class="note">
+          <div><b>권장</b> 메모리 없음은 2×2 슬롯 교체, 2×1 흐름. 업데이트 중은 스캔. 동작 줄이기 사용자는 원안.</div>
+          <ul>
+            <li>정책 v0.24는 로고를 '흐리게' 보여 주라 했고 디자인은 선명하다. 톤 토글로 비교한다.</li>
+            <li>실제 로고는 흰 배경 워드마크가 많아 원형 안에서 작아 보인다. 여백 트림과 테두리 링으로 보정했다.</li>
+            <li>로켓지원 공고가 많아도 로고가 없는 기업(BGF 46건 등)은 풀에서 뺐다.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <section class="pool" id="pool"></section>
+
+    <img src="assets/icon-heart.svg" alt="" hidden />
+    <script src="assets/logos.js"></script>
+    <script>
+      (function () {
+        const DATA = window.JOBDA_ROCKET_LOGOS || { logos: [], snapshot: {} };
+        const ALL = DATA.logos.filter((l) => l.tier !== 'C');
+        const TIER_A = ALL.filter((l) => l.tier === 'A');
+        const EXCLUDED = DATA.logos.filter((l) => l.tier === 'C');
+        const PHRASES = ['원하는 연봉의', '직무와 일치하는', '원하는 지역의'];
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const S = { state: 'empty', motion: 'swap', speed: 1, tone: 'clear', pool: 'A', roll: true, playing: true };
+
+        const MOTION_DESC = {
+          static: '디자인 원안. 로고 4개는 고정하고 밑줄 문구만 롤링한다. 동작 줄이기 사용자에게 보여 주는 기준 상태.',
+          swap: '2~3초마다 한 자리씩 다른 기업으로 바뀐다. 보드의 다른 위젯을 방해하지 않는 크기의 움직임으로 "기업이 많다"는 인상을 준다.',
+          set: '밑줄 문구가 바뀌는 순간 로고 4개가 순서대로 함께 바뀐다. 문구와 로고를 하나의 추천 미리보기로 묶는다.',
+          stream: '로고가 옆으로 계속 흘러간다. 폭을 다 쓰는 2×1에 맞고, 2×2에서는 시선을 과하게 끈다. 마우스를 올리면 멈춘다.',
+          scan: '업데이트 중 전용. 하이라이트가 로고를 훑고 지나가며 끝에서 한 자리가 바뀐다. 이력서를 읽고 기업과 대조하는 중이라는 뜻.',
+        };
+
+        const ICON = {
+          heart: '<img src="assets/icon-heart.svg" alt="" />',
+          chevron: '<img src="assets/icon-chevron-right.svg" alt="" />',
+          rocket:
+            '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9.6 2.2c1.9-.5 3.6-.3 4.2.3.6.6.8 2.3.3 4.2-.4 1.5-1.3 3-2.6 4.3l-1.2 1.2-.4 1.8c-.1.3-.4.4-.6.2l-1.7-1.7-2.4-.3L3.5 10.5l-.3-2.4L1.5 6.4c-.2-.2-.1-.5.2-.6l1.8-.4 1.2-1.2C6 2.9 7.9 2.6 9.6 2.2Z" fill="#3157E8"/><circle cx="10.2" cy="5.8" r="1.3" fill="#fff"/><path d="M4.2 11.8c-.9.3-1.6 1.2-1.9 2.8 1.6-.3 2.5-1 2.8-1.9l-.9-.9Z" fill="#3157E8"/></svg>',
+          mail: '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="2" fill="#3157E8"/><path d="m2.2 4.4 5.8 4.3 5.8-4.3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+          spinner:
+            '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12.8 1.8v2.9H9.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        };
+
+        const COPY = {
+          empty: {
+            w22: {
+              titleA: '커리어 메모리를 채우면',
+              titleB: ' 포지션을 추천해드려요',
+              caption: '이력서 파일 하나면 30초 안에 첫 추천이 도착해요',
+              chipIcon: 'heart',
+              chip: '커리어 메모리를 바탕으로 추천해요',
+              cta: '커리어 메모리 채우기',
+            },
+            w21: {
+              titleA: '커리어 메모리를 채우면',
+              titleB: ' 포지션을 추천해드려요',
+              chipIcon: 'rocket',
+              chip: '로켓지원 가능한 기업이 기다려요',
+              cta: '커리어 메모리 채우기',
+            },
+          },
+          updating: {
+            w22: {
+              titleA: '업데이트가 끝나면',
+              titleB: ' 포지션을 추천해드릴 수 있어요',
+              caption: '이력서의 경험을 읽고 있어요. 20~40초면 끝나요.',
+              chipIcon: 'mail',
+              chip: '완료되면 알림톡으로도 알려드려요',
+              cta: null,
+            },
+            w21: {
+              titleA: '업데이트가 끝나면',
+              titleB: ' 포지션을 추천해드릴 수 있어요',
+              chipIcon: 'mail',
+              chip: '완료되면 알림톡으로도 알려드려요',
+              cta: null,
+            },
+          },
+        };
+
+        const shuffle = (arr) => {
+          const a = arr.slice();
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        };
+
+        const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+        const logoHTML = (logo, i, cls = 'logo', lazy = false) =>
+          `<span class="${cls}" style="--i:${i}" title="${esc(logo.companyName)} · 로켓지원 공고 ${logo.positionCount}건"><img src="assets/${logo.file}" alt="${esc(logo.companyName)}" data-fit="${logo.fit}"${
+            lazy ? ' loading="lazy"' : ''
+          } /></span>`;
+
+        class Widget {
+          constructor(root, size, offset) {
+            this.root = root;
+            this.size = size;
+            this.offset = offset;
+            this.timers = [];
+            this.phraseIdx = 0;
+            this.order = [1, 3, 0, 2];
+            this.orderIdx = 0;
+            this.resetPool();
+          }
+
+          poolList() {
+            return S.pool === 'A' ? TIER_A : ALL;
+          }
+
+          resetPool(randomStart) {
+            const list = this.poolList();
+            const start = randomStart ? shuffle(list) : list.slice(this.offset).concat(list.slice(0, this.offset));
+            this.current = start.slice(0, 4);
+            this.queue = shuffle(list.filter((l) => !this.current.includes(l)));
+          }
+
+          nextLogo() {
+            if (!this.queue.length) {
+              this.queue = shuffle(this.poolList().filter((l) => !this.current.includes(l)));
+            }
+            return this.queue.shift();
+          }
+
+          copy() {
+            return COPY[S.state][this.size];
+          }
+
+          render() {
+            this.stop();
+            const c = this.copy();
+            const isUpdating = S.state === 'updating';
+            const stream = S.motion === 'stream' && !reduced;
+            const phrase = PHRASES[this.phraseIdx % PHRASES.length];
+
+            let rowInner;
+            if (stream) {
+              const list = this.poolList();
+              const items = list.length >= 12 ? list : list.concat(list);
+              const half = items.map((l, i) => logoHTML(l, i)).join('');
+              rowInner = `<div class="track">${half}${half}</div>`;
+            } else {
+              rowInner = `<div class="row-inner">${this.current.map((l, i) => logoHTML(l, i)).join('')}<span class="scanbar"></span></div>`;
+            }
+
+            this.root.innerHTML = `
+              <div class="w-head"><span>추천 포지션</span>${
+                isUpdating ? `<span class="status">${ICON.spinner}업데이트 중</span>` : ''
+              }</div>
+              <div class="w-body">
+                <div class="row ${stream ? 'stream' : ''} ${S.motion === 'scan' ? 'scan' : ''}">${rowInner}</div>
+                <div class="w-text">
+                  <p class="title">${esc(c.titleA)}${this.size === 'w22' ? '<br />' : ' '}<span class="roll"><span class="roll-item">${esc(phrase)}</span></span>${esc(c.titleB)}</p>
+                  ${c.caption ? `<p class="caption">${esc(c.caption)}</p>` : ''}
+                </div>
+              </div>
+              <div class="w-foot">
+                <span class="chip">${ICON[c.chipIcon]}${esc(c.chip)}</span>
+                ${c.cta ? `<button class="cta" type="button">${esc(c.cta)}${ICON.chevron}</button>` : ''}
+              </div>`;
+
+            this.slots = Array.from(this.root.querySelectorAll('.row-inner > .logo'));
+            this.roll = this.root.querySelector('.roll');
+            this.sizeRoll(phrase, false);
+
+            if (stream) {
+              const track = this.root.querySelector('.track');
+              const half = track.scrollWidth / 2;
+              const pxPerSec = this.size === 'w22' ? 26 : 22;
+              track.style.setProperty('--stream-dur', `${(half / pxPerSec) * S.speed}s`);
+            }
+            this.start();
+          }
+
+          sizeRoll(phrase, animate) {
+            if (!this.roll) return;
+            const m = document.getElementById('measure');
+            const title = this.root.querySelector('.title');
+            const cs = getComputedStyle(title);
+            m.style.font = `${cs.fontWeight} ${cs.fontSize} / ${cs.lineHeight} ${cs.fontFamily}`;
+            m.style.letterSpacing = cs.letterSpacing;
+            m.textContent = phrase;
+            const w = Math.ceil(m.getBoundingClientRect().width) + 1;
+            if (!animate) this.roll.style.transition = 'none';
+            this.roll.style.width = `${w}px`;
+            if (!animate) {
+              void this.roll.offsetWidth;
+              this.roll.style.transition = '';
+            }
+          }
+
+          rollPhrase() {
+            if (!this.roll || reduced || document.hidden) return;
+            // 이전 전환이 끝나지 않았어도 항목이 쌓이지 않게 정리한다 (rAF는 백그라운드 탭에서 멈춘다)
+            this.roll.querySelectorAll('.roll-item.leave').forEach((el) => el.remove());
+            const olds = Array.from(this.roll.querySelectorAll('.roll-item'));
+            olds.slice(0, -1).forEach((el) => el.remove());
+            const old = olds[olds.length - 1] || null;
+            this.phraseIdx = (this.phraseIdx + 1) % PHRASES.length;
+            const phrase = PHRASES[this.phraseIdx];
+            const next = document.createElement('span');
+            next.className = 'roll-item enter';
+            next.textContent = phrase;
+            this.roll.appendChild(next);
+            this.sizeRoll(phrase, true);
+            void next.offsetWidth; // 스타일 확정 후 클래스를 떼어 전환을 시작한다
+            next.classList.remove('enter');
+            if (old) {
+              old.classList.add('leave');
+              this.after(520 * S.speed, () => old.remove());
+            }
+          }
+
+          swapSlot(slot, idx) {
+            if (!slot) return;
+            const logo = this.nextLogo();
+            if (!logo) return;
+            slot.classList.add('is-out');
+            this.after(240 * S.speed, () => {
+              const img = slot.querySelector('img');
+              img.src = `assets/${logo.file}`;
+              img.alt = logo.companyName;
+              img.dataset.fit = logo.fit;
+              slot.title = `${logo.companyName} · 로켓지원 공고 ${logo.positionCount}건`;
+              this.current[idx] = logo;
+              slot.classList.remove('is-out');
+              slot.classList.add('is-in');
+              void slot.offsetWidth;
+              slot.classList.remove('is-in');
+            });
+          }
+
+          swapOne() {
+            const idx = this.order[this.orderIdx++ % this.order.length];
+            this.swapSlot(this.slots[idx], idx);
+          }
+
+          swapAll() {
+            this.slots.forEach((slot, i) => this.after(i * 90 * S.speed, () => this.swapSlot(slot, i)));
+          }
+
+          after(ms, fn) {
+            const t = setTimeout(fn, ms);
+            this.timers.push(t);
+            return t;
+          }
+
+          every(ms, fn) {
+            const t = setInterval(fn, ms);
+            this.timers.push(t);
+            return t;
+          }
+
+          start() {
+            if (!S.playing || reduced) return;
+            const sp = S.speed;
+            const rollIndependent = S.roll && S.motion !== 'set';
+            if (rollIndependent) this.every(3900 * sp + this.offset * 90, () => this.rollPhrase());
+            switch (S.motion) {
+              case 'swap':
+                this.after(600 * sp + this.offset * 120, () => {
+                  this.swapOne();
+                  this.every(2600 * sp, () => this.swapOne());
+                });
+                break;
+              case 'set':
+                this.every(4200 * sp, () => {
+                  if (S.roll) this.rollPhrase();
+                  this.swapAll();
+                });
+                break;
+              case 'scan':
+                this.after(1600 * sp, () => {
+                  this.swapOne();
+                  this.every(2400 * sp, () => this.swapOne());
+                });
+                break;
+              default:
+                break;
+            }
+          }
+
+          stop() {
+            this.timers.forEach((t) => {
+              clearTimeout(t);
+              clearInterval(t);
+            });
+            this.timers = [];
+          }
+        }
+
+        const measure = document.createElement('span');
+        measure.id = 'measure';
+        measure.style.cssText = 'position:absolute;left:-9999px;top:-9999px;white-space:nowrap;visibility:hidden';
+        document.body.appendChild(measure);
+
+        const stage = document.getElementById('stage');
+        const widgets = [new Widget(document.getElementById('w22'), 'w22', 0), new Widget(document.getElementById('w21'), 'w21', 4)];
+
+        function applyMotionAvailability() {
+          const scanBtn = document.querySelector('[data-key="motion"] [data-v="scan"]');
+          scanBtn.disabled = false;
+        }
+
+        function renderAll() {
+          document.documentElement.style.setProperty('--spd', S.speed);
+          stage.classList.toggle('is-playing', S.playing && !reduced);
+          stage.classList.toggle('paused', !S.playing);
+          stage.className = stage.className.replace(/\btone-\w+/g, '') + ` tone-${S.tone}`;
+          document.getElementById('motionDesc').textContent = MOTION_DESC[S.motion];
+          document.getElementById('playToggle').textContent = S.playing ? '일시 정지' : '재생';
+          widgets.forEach((w) => w.render());
+        }
+
+        document.querySelectorAll('.seg').forEach((seg) => {
+          seg.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-v]');
+            if (!btn || btn.disabled) return;
+            const key = seg.dataset.key;
+            const v = btn.dataset.v;
+            seg.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === btn));
+            if (key === 'speed') S.speed = Number(v);
+            else S[key] = v;
+            if (key === 'pool') widgets.forEach((w) => w.resetPool(false));
+            if (key === 'tone') {
+              stage.className = stage.className.replace(/\btone-\w+/g, '') + ` tone-${S.tone}`;
+              return;
+            }
+            renderAll();
+          });
+        });
+
+        document.getElementById('rollToggle').addEventListener('change', (e) => {
+          S.roll = e.target.checked;
+          renderAll();
+        });
+
+        document.getElementById('playToggle').addEventListener('click', () => {
+          S.playing = !S.playing;
+          renderAll();
+        });
+
+        document.getElementById('reshuffle').addEventListener('click', () => {
+          widgets.forEach((w) => w.resetPool(true));
+          renderAll();
+        });
+
+        // 메타
+        const snap = DATA.snapshot || {};
+        document.getElementById('meta').innerHTML = `수집 ${esc(DATA.retrievedAt || '')} · 로켓지원 공고 ${esc(
+          snap.rocketPositions ?? '-'
+        )}건 · 기업 ${esc(snap.companies ?? '-')}개(로고 있는 기업 ${esc(snap.companiesWithLogo ?? '-')}개) · 로고 ${DATA.logos.length}개 수집, 기본 ${TIER_A.length}개, 풀 ${ALL.length}개<a href="https://www.jobda.im/position" target="_blank" rel="noopener">잡다 채용정보 · 로켓지원 공고</a><a href="assets/logos.json" target="_blank" rel="noopener">logos.json</a>`;
+        document.getElementById('poolAllBtn').textContent = `전체 ${ALL.length}`;
+
+        // 로고 풀 목록
+        const poolItem = (l) =>
+          `<div class="pool-item ${l.tier === 'C' ? 'excluded' : ''}">${logoHTML(l, 0, 'logo', true)}<div class="txt"><div class="name">${esc(
+            l.companyName
+          )}</div><div class="sub">${esc(l.industry)} · 로켓지원 ${l.positionCount}건${l.note ? ` · ${esc(l.note)}` : ''}</div></div></div>`;
+        document.getElementById('pool').innerHTML = `
+          <h2>기본 노출 ${TIER_A.length}개<small>취준생 인지도 · 로켓지원 공고 수 · 72px 원형 가독성 · 산업 다양성 기준</small></h2>
+          <div class="pool-grid">${TIER_A.map(poolItem).join('')}</div>
+          <h2>교체 풀 ${ALL.length - TIER_A.length}개<small>모션에서 순환하는 나머지 기업</small></h2>
+          <div class="pool-grid">${ALL.filter((l) => l.tier === 'B')
+            .map(poolItem)
+            .join('')}</div>
+          <details><summary>제외 ${EXCLUDED.length}개 · 사유 보기</summary><div class="pool-grid">${EXCLUDED.map(poolItem).join('')}</div></details>`;
+
+        if (reduced) {
+          document.body.classList.add('reduced-motion');
+          S.playing = false;
+        }
+        applyMotionAvailability();
+        renderAll();
+
+        // 웹폰트가 늦게 오면 밑줄 문구 폭이 대체 폰트 기준으로 잡히므로 다시 잰다
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => widgets.forEach((w) => w.sizeRoll(PHRASES[w.phraseIdx % PHRASES.length], false)));
+        }
+
+        // 탭이 숨겨지면 타이머를 멈추고, 돌아오면 깨끗한 상태로 다시 그린다
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) widgets.forEach((w) => w.stop());
+          else renderAll();
+        });
+      })();
+    </script>
+  </body>
+</html>
