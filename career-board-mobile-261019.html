@@ -1538,7 +1538,7 @@ body.iv3d .g3-photo { background-image: var(--ivimg-g3_interviewer3d); }
 .jd-apply { flex: none; background: #fff; border-top: 1px solid #e7e8ea; padding: 12px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .jd-apply-btns { align-self: stretch; display: flex; gap: 8px; padding: 0 8px; }
 .jd-apply-btns button { height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 14px; line-height: 22px; font-weight: 700; color: #fff; }
-.jd-apply-btns .hp { flex: none; width: 125px; background: #121619; white-space: nowrap; }
+.jd-apply-btns .hp { flex: 1; min-width: 0; background: #121619; white-space: nowrap; } /* Figma 6782:90002 · 두 버튼 같은 너비 */
 .jd-apply-btns .rk { flex: 1; background: #F47220; }
 .jd-apply-btns .rk svg { width: 24px; height: 24px; }
 .jd-apply-q { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; font-weight: 500; color: #E76614; }
@@ -1742,8 +1742,15 @@ body.iv3d .g3-photo { background-image: var(--ivimg-g3_interviewer3d); }
 .rk2-genp .rk2-wrap > .scroll, .rk2-genp .rk2-gdim, .rk2-genp .rk2-cta { display: none; }
 .rk2-genp .rk2-wrap { justify-content: center; }
 .rk2-genp .rk2-modal { position: static; margin: 0 auto 64px; padding: 0 24px; background: none; box-shadow: none; }
-#rk-pledge .rk2-pledge .o { border-color: #e3722c; }
-#rk-pledge .rk2-pledge .i { border-color: #a5dfb6; min-height: 0; }
+/* 서약서 컬러 · Figma 7418:121339 */
+#rk-pledge .rk2-pledge { border: 1px solid #dfe0e2; border-radius: 12px; box-shadow: none; padding: 20px; }
+#rk-pledge .rk2-pledge .o { border: 2px solid #40c057; padding: 6px; }
+#rk-pledge .rk2-pledge .i { border: 1px solid #b2f2bb; background: #fff; min-height: 0; padding: 24px 20px; }
+#rk-pledge .rk2-pledge .i > b { color: #343a40; }
+#rk-pledge .rk2-pledge li, #rk-pledge .rk2-pledge .sg { color: #343a40; }
+#rk-pledge .rk2-pchk { padding: 24px 0 0; color: #343a40; }
+#rk-pledge .rk2-pchk .ckb { border-color: #ced4da; background: #fff; }
+#rk-pledge .rk2-pchk.on .ckb { background: #e95907; border-color: #e95907; }
 #rk-done .rk2-done .bd button { background: #e3722c; }
 .rk2-pchk { width: 100%; display: flex; align-items: center; gap: 8px; padding: 16px 4px 18px; font-size: 13px; line-height: 20px; font-weight: 500; color: #333436; text-align: left; }
 .rk2-pchk .ckb { flex: none; width: 20px; height: 20px; border: 1px solid #d1d2d4; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: transparent; }
